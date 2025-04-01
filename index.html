@@ -10,13 +10,24 @@
       import * as THREE from "./three.module.js";
       import { OrbitControls } from "./OrbitControls.js";
 
+      const orbitRadiusearth = 9; // Distancia entre el sol y el planeta
+      const orbitRadiusvenus = 4; // Distancia entre el sol y el planeta
+      const orbitRadiusmercury = 6; // Distancia entre el sol y el planeta
+      const orbitRadiusmars = 12; // Distancia entre el sol y el planeta
+
+      const orbitSpeed = 0.01; // Velocidad de la órbita
+      let orbitAngle = 3; // Ángulo inicial
+      let orbitAngle2 = 2.0; // Ángulo inicial
+      let orbitAngle3 = 1.0; // Ángulo inicial
+      let orbitAngle4 = 0; // Ángulo inicial
+
       const scene = new THREE.Scene();
       const backgroundTexture = new THREE.TextureLoader().load(
         "./assets/fondo.jpg"
       );
-      scene.background = new THREE.Color(0xffffff); // Set the background color to black
+      scene.background = backgroundTexture; // Set the background color to black
       const camera = new THREE.PerspectiveCamera(
-        75,
+        95,
         window.innerWidth / window.innerHeight,
         0.1,
         1000
@@ -34,25 +45,59 @@
       const ambientalLight = new THREE.AmbientLight(0xffffff, 1); // Soft white light
       scene.add(ambientalLight);
 
-      //luz helper
-      const helperlight = new THREE.DirectionalLightHelper(light, 1, 0xff0000);
-      scene.add(helperlight);
+      const sunGeometry = new THREE.SphereGeometry(2, 32, 32);
+      const sunMaterial = sunTexture();
+      const sun = new THREE.Mesh(sunGeometry, sunMaterial);
+      sun.position.set(0, 0, 0); // Set the position of the sphere
+      scene.add(sun); // Add the sphere to the scene
 
-      const boxgeometry = new THREE.BoxGeometry(1, 1, 1);
-      const boxmaterial = new THREE.MeshPhongMaterial({
-        color: 0x00ff00,
-        wireframe: false,
-      });
-      const cube = new THREE.Mesh(boxgeometry, boxmaterial);
-      cube.position.set(0, 0, 0); // Set the cube position to the center of the scene
-      scene.add(cube);
+      const venusGeometry = new THREE.SphereGeometry(0.5, 32, 32);
+      const venusMaterial = mercuryTexture();
+      const venus = new THREE.Mesh(venusGeometry, venusMaterial);
+      venus.position.set(4, 0, 0); // Set the position of the sphere
+      scene.add(venus); // Add the sphere to the scene
 
-      //plano
+      const mercuryGeometry = new THREE.SphereGeometry(0.5, 32, 32);
+      const mercuryMaterial = venusTexture();
+      const mercury = new THREE.Mesh(mercuryGeometry, mercuryMaterial);
+      mercury.position.set(6, 0, 0); // Set the position of the sphere
+      scene.add(mercury); // Add the sphere to the scene
 
-      //const earthGeometry = new THREE.SphereGeometry(1, 32, 32);
-      //const earthmaterial = earthmaterial();
-      // const earth = new THREE.Mesh(earthGeometry, earthmaterial);
-      //scene.add(earth);
+      const earthGeometry = new THREE.SphereGeometry(1, 32, 32);
+      const earthMaterial = earthTexture();
+      const earth = new THREE.Mesh(earthGeometry, earthMaterial);
+      earth.position.set(9, 0, 0); // Set the position of the sphere
+      scene.add(earth); // Add the sphere to the scene
+
+      const marsGeometry = new THREE.SphereGeometry(1, 32, 32);
+      const marsMaterial = marsTexture();
+      const mars = new THREE.Mesh(marsGeometry, marsMaterial);
+      mars.position.set(12, 0, 0); // Set the position of the sphere
+      scene.add(mars); // Add the sphere to the scene
+
+      const jupiterGeometry = new THREE.SphereGeometry(2, 32, 32);
+      const jupiterMaterial = jupiterTexture();
+      const jupiter = new THREE.Mesh(jupiterGeometry, jupiterMaterial);
+      jupiter.position.set(16, 0, 0); // Set the position of the sphere
+      scene.add(jupiter); // Add the sphere to the scene
+
+      const saturnGeometry = new THREE.SphereGeometry(2, 32, 32);
+      const saturnMaterial = saturnTexture();
+      const saturn = new THREE.Mesh(saturnGeometry, saturnMaterial);
+      saturn.position.set(22, 0, 0); // Set the position of the sphere
+      scene.add(saturn); // Add the sphere to the scene
+
+      const ringGeometry = new THREE.RingGeometry(1, 3, 32);
+      const ringMaterial = ringTexture();
+      const ring = new THREE.Mesh(ringGeometry, ringMaterial);
+      ring.rotation.x = Math.PI / -2; // Rotate the ring to be horizontal
+      ring.position.set(22, 0, 0); // Set the position of the sphere
+      scene.add(ring); // Add the sphere to the scene
+
+      const ring2 = new THREE.Mesh(ringGeometry, ringMaterial);
+      ring2.rotation.x = Math.PI / 2; // Rotate the ring to be horizontal
+      ring2.position.set(22, 0, 0); // Set the position of the sphere
+      scene.add(ring2); // Add the sphere to the scene
 
       const renderer = new THREE.WebGLRenderer({ antialias: true });
       renderer.setSize(window.innerWidth, window.innerHeight);
@@ -63,19 +108,82 @@
       animate();
 
       function animate() {
+        orbitAngle += orbitSpeed;
+        orbitAngle2 += orbitSpeed;
+        orbitAngle3 += orbitSpeed;
+        orbitAngle4 += orbitSpeed; // Incrementa el ángulo
+        earth.position.x = orbitRadiusearth * Math.cos(orbitAngle); // Coordenada X
+        earth.position.z = orbitRadiusearth * Math.sin(orbitAngle2); // Coordenada Z (órb
+        venus.position.x = orbitRadiusvenus * Math.cos(orbitAngle3); // Coordenada X
+        venus.position.z = orbitRadiusvenus * Math.sin(orbitAngle4); // Coordenada Z (órb
+        mercury.position.x = orbitRadiusmercury * Math.cos(orbitAngle); // Coordenada X
+        mercury.position.z = orbitRadiusmercury * Math.sin(orbitAngle); // Coordenada Z (órb
+        mars.position.x = orbitRadiusmars * Math.cos(orbitAngle); // Coordenada X
+        mars.position.z = orbitRadiusmars * Math.sin(orbitAngle); // Coordenada Z (órb
         requestAnimationFrame(animate);
-        cube.rotation.x += 0.01;
-        cube.rotation.y += 0.01;
         renderer.render(scene, camera);
       }
 
-      function earthmaterial() {
-        const earthmaterial = new THREE.MeshPhongMaterial();
-        const earthtexture = new THREE.TextureLoader().load(
+      function earthTexture() {
+        const eartTexture = new THREE.TextureLoader().load(
           "./assets/tierra.jpg"
         );
-        earthmaterial.map = earthtexture;
-        return earthmaterial;
+        const material = new THREE.MeshPhongMaterial();
+        material.map = eartTexture;
+        return material;
+      }
+
+      function sunTexture() {
+        const Texture = new THREE.TextureLoader().load("./assets/sun.jpg");
+        const material = new THREE.MeshPhongMaterial();
+        material.map = Texture;
+        return material;
+      }
+
+      function venusTexture() {
+        const Texture = new THREE.TextureLoader().load("./assets/venus.jpg");
+        const material = new THREE.MeshPhongMaterial();
+        material.map = Texture;
+        return material;
+      }
+
+      function mercuryTexture() {
+        const Texture = new THREE.TextureLoader().load("./assets/mercurio.jpg");
+        const material = new THREE.MeshPhongMaterial();
+        material.map = Texture;
+        return material;
+      }
+
+      function marsTexture() {
+        const Texture = new THREE.TextureLoader().load("./assets/marte.jpg");
+        const material = new THREE.MeshPhongMaterial();
+        material.map = Texture;
+        return material;
+      }
+
+      function jupiterTexture() {
+        const sunTexture = new THREE.TextureLoader().load(
+          "./assets/jupiter.jpg"
+        );
+        const material = new THREE.MeshPhongMaterial();
+        material.map = sunTexture;
+        return material;
+      }
+
+      function saturnTexture() {
+        const sunTexture = new THREE.TextureLoader().load(
+          "./assets/saturno.jpg"
+        );
+        const material = new THREE.MeshPhongMaterial();
+        material.map = sunTexture;
+        return material;
+      }
+
+      function ringTexture() {
+        const Texture = new THREE.TextureLoader().load("./assets/anillo.png");
+        const material = new THREE.MeshPhongMaterial();
+        material.map = Texture;
+        return material;
       }
     </script>
   </body>
